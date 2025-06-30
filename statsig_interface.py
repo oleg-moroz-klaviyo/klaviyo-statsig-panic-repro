@@ -24,15 +24,19 @@ class StatsigInterface:
     @classmethod
     def initialize(cls) -> None:
         """Initialize the global Statsig client and register at-fork callbacks."""
+        cls.maybe_register_at_fork_hooks()
+        cls._initialize_statsig()
+
+    @classmethod
+    def maybe_register_at_fork_hooks(cls) -> None:
+        """Register at-fork hooks to handle Statsig client initialization and shutdown."""
         if not cls._at_fork_hooks_registered:
             os.register_at_fork(
                 before=cls.maybe_shutdown_statsig,
-                after_in_parent=cls._initialize_statsig,
+                after_in_parent=cls.maybe_shutdown_statsig,
                 after_in_child=cls._initialize_statsig,
             )
             cls._at_fork_hooks_registered = True
-
-        cls._initialize_statsig()
 
     @classmethod
     def maybe_shutdown_statsig(cls) -> None:
