@@ -13,7 +13,7 @@ set_up_logging()
 logger = logging.getLogger("repro")
 
 multiprocessing.set_start_method("fork", force=True)
-StatsigInterface.initialize()
+StatsigInterface.maybe_register_at_fork_hooks()
 
 
 def _pass_through_task() -> None:
