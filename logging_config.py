@@ -16,7 +16,6 @@ def set_up_logging() -> None:
 
     rich_handler = RichHandler()
     rich_handler.setLevel(logging.INFO)
-
     logging.basicConfig(
         level=logging.DEBUG,
         format="%(name)s: %(message)s",
