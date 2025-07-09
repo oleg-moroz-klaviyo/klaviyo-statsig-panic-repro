@@ -6,10 +6,9 @@ import os
 import time
 from typing import Generator
 
-from statsig_interface import StatsigInterface
 from logging_config import set_up_logging
+from statsig_interface import StatsigInterface
 
-set_up_logging()
 logger = logging.getLogger("repro")
 
 multiprocessing.set_start_method("fork", force=True)
@@ -30,6 +29,9 @@ def _proc_name_generator(start: int) -> Generator:
 
 
 def run(timeout: int) -> None:
+    set_up_logging()  # a new logfile for each run
+
+    logger.info("Starting the run...")
     proc_index = 0
     while True:
         logger.info("Starting a new batch of processes")
@@ -76,5 +78,4 @@ def run(timeout: int) -> None:
 
 
 if __name__ == "__main__":
-    logger.info("Starting the run...")
     run(timeout=300)  # seconds

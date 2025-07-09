@@ -3,6 +3,7 @@ from __future__ import annotations
 import datetime
 import logging
 import os
+
 from statsig_python_core import Statsig, StatsigOptions
 from dotenv import load_dotenv
 
@@ -24,6 +25,12 @@ class StatsigInterface:
     @classmethod
     def initialize(cls) -> None:
         """Initialize the global Statsig client and register at-fork callbacks."""
+        cls.maybe_register_at_fork_hooks()
+        cls._initialize_statsig()
+
+    @classmethod
+    def maybe_register_at_fork_hooks(cls) -> None:
+        """Register at-fork hooks to handle Statsig client initialization and shutdown."""
         if not cls._at_fork_hooks_registered:
             os.register_at_fork(
                 before=cls.maybe_shutdown_statsig,
@@ -31,8 +38,6 @@ class StatsigInterface:
                 after_in_child=cls._initialize_statsig,
             )
             cls._at_fork_hooks_registered = True
-
-        cls._initialize_statsig()
 
     @classmethod
     def maybe_shutdown_statsig(cls) -> None:
@@ -48,9 +53,10 @@ class StatsigInterface:
             Statsig.remove_shared()
 
             elapsed = round((datetime.datetime.now() - start).total_seconds(), 4)
+            logger.debug(f"pid {pid}: Shutdown completed in {elapsed}s")
             if elapsed >= 5:
                 pid = os.getpid()
-                logger.warning(f"pid {pid}: Shutdown and removal took a while, completed in {elapsed}s")
+                logger.warning(f"pid {pid}: Shutdown took a while, completed in {elapsed}s")
 
     @classmethod
     def _initialize_statsig(cls) -> None:
@@ -75,5 +81,6 @@ class StatsigInterface:
         shared_instance.initialize().wait()
 
         elapsed = round((datetime.datetime.now() - start).total_seconds(), 4)
+        logger.debug(f"pid {pid}: Initialization completed in {elapsed}s")
         if elapsed >= 5:
             logger.warning(f"pid {pid}: Init took a while, completed in {elapsed}s")
