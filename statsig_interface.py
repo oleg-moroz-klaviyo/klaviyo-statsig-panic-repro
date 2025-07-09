@@ -26,6 +26,12 @@ class StatsigInterface:
     @classmethod
     def initialize(cls) -> None:
         """Initialize the global Statsig client and register at-fork callbacks."""
+        cls.maybe_register_at_fork_hooks()
+        cls._initialize_statsig()
+
+    @classmethod
+    def maybe_register_at_fork_hooks(cls) -> None:
+        """Register at-fork hooks to handle Statsig client initialization and shutdown."""
         if not cls._at_fork_hooks_registered:
             os.register_at_fork(
                 before=cls.maybe_shutdown_statsig,
@@ -33,8 +39,6 @@ class StatsigInterface:
                 after_in_child=cls._initialize_statsig,
             )
             cls._at_fork_hooks_registered = True
-
-        cls._initialize_statsig()
 
     @classmethod
     def maybe_shutdown_statsig(cls) -> None:
@@ -64,7 +68,11 @@ class StatsigInterface:
         start = datetime.datetime.now()
 
         environment = os.getenv("STATSIG_ENVIRONMENT")
-        tier = StatsigEnvironmentTier.production if environment == "production" else StatsigEnvironmentTier.development
+        tier = (
+            StatsigEnvironmentTier.production
+            if environment == "production"
+            else StatsigEnvironmentTier.development
+        )
         options = StatsigOptions(tier=tier)
 
         if not SERVER_SDK_KEY:
