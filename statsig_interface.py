@@ -53,9 +53,10 @@ class StatsigInterface:
             statsig.shutdown()
 
             elapsed = round((datetime.datetime.now() - start).total_seconds(), 4)
+            logger.debug(f"pid {pid}: Shutdown completed in {elapsed}s")
             if elapsed >= 5:
                 pid = os.getpid()
-                logger.warning(f"pid {pid}: Shutdown and removal took a while, completed in {elapsed}s")
+                logger.warning(f"pid {pid}: Shutdown took a while, completed in {elapsed}s")
 
     @classmethod
     def _initialize_statsig(cls) -> None:
@@ -86,5 +87,6 @@ class StatsigInterface:
             time.sleep(0.02)
 
         elapsed = round((datetime.datetime.now() - start).total_seconds(), 4)
+        logger.debug(f"pid {pid}: Initialization completed in {elapsed}s")
         if elapsed >= 5:
             logger.warning(f"pid {pid}: Init took a while, completed in {elapsed}s")
