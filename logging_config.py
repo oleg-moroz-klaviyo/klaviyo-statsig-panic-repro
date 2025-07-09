@@ -4,7 +4,7 @@ from rich.logging import RichHandler
 
 def set_up_logging() -> None:
     file_formatter = logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s")
-    file_handler = logging.FileHandler("repro.log")
+    file_handler = logging.FileHandler("repro_wrapped.log")
     file_handler.setLevel(logging.DEBUG)
     file_handler.setFormatter(file_formatter)
 
