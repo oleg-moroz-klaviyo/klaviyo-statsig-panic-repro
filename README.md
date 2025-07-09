@@ -11,7 +11,7 @@ each fork end up with their own instances of Statsig.
 If the parent thread notices that a fork has been alive beyond the specified timeout for some reason, it will terminate 
 all forks and restart the forking. The script will continue running until stopped. 
 
-Logs are written to `repro.log` in the current directory.
+Logs are written to `repro_wrapped_<timestamp>.log` in the current directory.
 
 ---
 
@@ -56,13 +56,13 @@ Logs are written to `repro.log` in the current directory.
 1. Run the script
 
     ```shell
-    python repro.py
+    python3 repro.py
     ```
    
     If you want to adjust the fork timeout window (5 minutes by default), run the script directly in a Python shell:
 
     ```shell
-    python
+    python3
     ```
    
     ```python
@@ -73,7 +73,7 @@ Logs are written to `repro.log` in the current directory.
 
 2. Monitor the log output for [panic symptoms](#panic-symptoms)
 
-3. To stop the script, press `Ctrl+C`
+3. To stop the script, `SIGTERM` the parent process by PID. Pressing `Ctrl+C` may also work.
 
 ---
 
