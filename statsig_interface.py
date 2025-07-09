@@ -35,7 +35,7 @@ class StatsigInterface:
         if not cls._at_fork_hooks_registered:
             os.register_at_fork(
                 before=cls.maybe_shutdown_statsig,
-                after_in_parent=cls._initialize_statsig,
+                after_in_parent=cls.maybe_shutdown_statsig,
                 after_in_child=cls._initialize_statsig,
             )
             cls._at_fork_hooks_registered = True

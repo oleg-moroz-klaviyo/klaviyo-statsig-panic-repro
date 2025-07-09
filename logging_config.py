@@ -9,7 +9,7 @@ def set_up_logging() -> None:
         "%(asctime)s %(levelname)s %(name)s: %(message)s"
     )
     file_handler = logging.FileHandler(
-        f"repro_wrapped_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.log"
+        f"repro_post_fork_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.log"
     )
     file_handler.setLevel(logging.DEBUG)
     file_handler.setFormatter(file_formatter)
