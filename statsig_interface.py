@@ -83,8 +83,6 @@ class StatsigInterface:
             )
 
         statsig.initialize(SERVER_SDK_KEY, options)
-        while not statsig.is_initialized():
-            time.sleep(0.02)
 
         elapsed = round((datetime.datetime.now() - start).total_seconds(), 4)
         logger.debug(f"pid {pid}: Initialization completed in {elapsed}s")
