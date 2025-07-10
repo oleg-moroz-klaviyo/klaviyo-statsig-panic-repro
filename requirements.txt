@@ -8,6 +8,6 @@ Pygments==2.19.2
 python-dotenv==1.1.1
 requests==2.32.4
 rich==14.0.0
-statsig==0.58.3
+statsig==0.58.4
 typing_extensions==4.14.0
 urllib3==2.5.0
