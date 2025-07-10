@@ -11,7 +11,7 @@ each fork end up with their own instances of Statsig.
 If the parent thread notices that a fork has been alive beyond the specified timeout for some reason, it will terminate 
 all forks and restart the forking. The script will continue running until stopped. 
 
-Logs are written to `repro_wrapped_<timestamp>.log` in the current directory.
+Logs are written to `repro_post_fork_<timestamp>.log` in the current directory.
 
 ---
 
