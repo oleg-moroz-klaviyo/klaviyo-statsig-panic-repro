@@ -7,6 +7,7 @@ import time
 from typing import Generator
 
 from logging_config import set_up_logging
+from memory_tracker import MemoryTracker
 from statsig_interface import StatsigInterface
 
 logger = logging.getLogger("repro")
@@ -30,6 +31,9 @@ def _proc_name_generator(start: int) -> Generator:
 
 def run(timeout: int) -> None:
     set_up_logging()  # a new logfile for each run
+
+    memory_tracker = MemoryTracker()
+    memory_tracker.check_memory_usage()
 
     logger.info("Starting the run...")
     proc_index = 0
@@ -57,6 +61,8 @@ def run(timeout: int) -> None:
             if not any(alive):
                 # All the processes are done, break now.
                 break
+
+            memory_tracker.check_memory_usage()
 
             # Print logs if procs are taking longer than expected
             elapsed = round(time.time() - start, 1)
