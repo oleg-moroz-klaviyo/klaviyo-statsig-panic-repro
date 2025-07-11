@@ -77,6 +77,21 @@ Logs are written to `repro_wrapped_<timestamp>.log` in the current directory.
 
 ---
 
+### Logs
+
+The init times from the log can be analyzed with `python3 analyze_log.py`. 
+By default, the analyzer will pick the latest logfile. 
+
+To check a specific log, provide the filename in a Python shell:
+
+```python
+from analyze_log import analyze_log
+
+analyze_log("repro_wrapped_2025-07-10_15-57-01.log")
+```
+
+---
+
 ### Panic symptoms
 After a few minutes, Statsig will panic in one of the forked processes. 
 

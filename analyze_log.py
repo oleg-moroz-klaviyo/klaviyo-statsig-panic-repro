@@ -46,9 +46,9 @@ def analyze_log(filename):
 
 def find_latest_logfile():
     """
-    Returns the lexicographically latest logfile matching repro_wrapped_*.log in the current directory.
+    Returns the lexicographically latest logfile matching repro_*.log in the current directory.
     """
-    logfiles = glob.glob("repro_wrapped_*.log")
+    logfiles = glob.glob("repro_*.log")
     if not logfiles:
         return None
     logfiles.sort()
