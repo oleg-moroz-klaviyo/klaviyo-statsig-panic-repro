@@ -2,12 +2,21 @@ import re
 import statistics
 import glob
 from datetime import datetime
+import numpy as np
 
 def analyze_log(filename):
     """
     Parses the log file, computes and prints:
-    - Mean, median, and max initialization times
-    - Number of hours between first and last log entry
+
+    - Number of hours between the first and last initializations
+    - Initialization times
+        - Count
+        - Mean
+        - Median
+        - Max
+        - p99
+        - p99.9
+        - p99.99
     """
     timestamp_pattern = re.compile(r"^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3})")
     init_time_pattern = re.compile(r"Initialization completed in ([0-9.]+)s")
@@ -37,10 +46,17 @@ def analyze_log(filename):
         print("No timestamped log lines found.")
 
     if init_times:
+        inits_np = np.array(init_times)
+        p99 = np.percentile(inits_np, 99) if len(init_times) > 1 else init_times[0]
+        p99_9 = np.percentile(inits_np, 99.9) if len(init_times) > 1 else init_times[0]
+        p99_99 = np.percentile(inits_np, 99.99) if len(init_times) > 1 else init_times[0]
         print(f"Inits:  {len(init_times)}")
-        print(f"Mean:   {statistics.mean(init_times):.5f} s")
-        print(f"Median: {statistics.median(init_times):.5f} s")
-        print(f"Max:    {max(init_times):.5f} s")
+        print(f"Mean:   {statistics.mean(init_times):.3f} s")
+        print(f"Median: {statistics.median(init_times):.3f} s")
+        print(f"Max:    {max(init_times):.3f} s")
+        print(f"p99:    {p99:.3f} s")
+        print(f"p99.9:  {p99_9:.3f} s")
+        print(f"p99.99: {p99_99:.3f} s")
     else:
         print("No initialization times found in the log.")
 
@@ -53,7 +69,6 @@ def find_latest_logfile():
         return None
     logfiles.sort()
     return logfiles[-1]
-
 
 if __name__ == "__main__":
     latest_logfile = find_latest_logfile()
