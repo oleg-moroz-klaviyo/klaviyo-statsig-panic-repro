@@ -74,7 +74,10 @@ class StatsigInterface:
             if environment == "production"
             else StatsigEnvironmentTier.development
         )
-        options = StatsigOptions(tier=tier)
+        options = StatsigOptions(
+            tier=tier,
+            timeout=1,  # seconds
+        )
 
         if not SERVER_SDK_KEY:
             options.disable_network = True
