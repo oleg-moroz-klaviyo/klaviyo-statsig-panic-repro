@@ -76,7 +76,7 @@ class StatsigInterface:
         )
         options = StatsigOptions(
             tier=tier,
-            timeout=3,  # seconds
+            timeout=1,  # seconds
         )
 
         if not SERVER_SDK_KEY:
