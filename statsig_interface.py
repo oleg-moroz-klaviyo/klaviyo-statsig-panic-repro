@@ -3,8 +3,9 @@ from __future__ import annotations
 import datetime
 import logging
 import os
+import time
 
-from statsig_python_core import Statsig, StatsigOptions
+from statsig import statsig, StatsigOptions, StatsigEnvironmentTier
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -42,15 +43,14 @@ class StatsigInterface:
     @classmethod
     def maybe_shutdown_statsig(cls) -> None:
         """Flush pending events and dispose the shared Statsig client."""
-        if Statsig.has_shared_instance():
+        if statsig.is_initialized():
 
             pid = os.getpid()
             logger.debug(f"pid {pid}: Shutting down existing Statsig...")
 
             start = datetime.datetime.now()
 
-            Statsig.shared().shutdown().wait()
-            Statsig.remove_shared()
+            statsig.shutdown()
 
             elapsed = round((datetime.datetime.now() - start).total_seconds(), 4)
             logger.debug(f"pid {pid}: Shutdown completed in {elapsed}s")
@@ -68,8 +68,13 @@ class StatsigInterface:
 
         start = datetime.datetime.now()
 
-        options = StatsigOptions()
-        options.environment = os.getenv("STATSIG_ENVIRONMENT", "development")
+        environment = os.getenv("STATSIG_ENVIRONMENT")
+        tier = (
+            StatsigEnvironmentTier.production
+            if environment == "production"
+            else StatsigEnvironmentTier.development
+        )
+        options = StatsigOptions(tier=tier)
 
         if not SERVER_SDK_KEY:
             options.disable_network = True
@@ -77,8 +82,7 @@ class StatsigInterface:
                 "No Statsig server SDK key provided – running in local mode."
             )
 
-        shared_instance = Statsig.new_shared(SERVER_SDK_KEY, options)
-        shared_instance.initialize().wait()
+        statsig.initialize(SERVER_SDK_KEY, options)
 
         elapsed = round((datetime.datetime.now() - start).total_seconds(), 4)
         logger.debug(f"pid {pid}: Initialization completed in {elapsed}s")
